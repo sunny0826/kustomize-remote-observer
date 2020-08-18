@@ -1,1 +1,1 @@
-# kustomize-remote-observer-
+# kustomize-remote-observer

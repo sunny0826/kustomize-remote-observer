@@ -1,0 +1,20 @@
+{{ template "header" . }}
+<div class="container" id="container">
+    <div class="page flex js_show">
+        <div class="weui-msg">
+            <div class="weui-msg__icon-area"><i class="weui-icon-success weui-icon_msg"></i></div>
+            <div class="weui-msg__text-area">
+                <h2 class="weui-msg__title">Success</h2>
+                <pre><code class="language-yaml" id="bar">{{.}}</code></pre>
+            </div>
+            <div class="weui-msg__opr-area">
+                <p class="weui-btn-area">
+                    <a href="javascript:location.reload();" class="weui-btn weui-btn_default">Back</a>
+                </p>
+
+            </div>
+            {{ template "copyright" .}}
+        </div>
+    </div>
+</div>
+{{ template "footer" . }}
