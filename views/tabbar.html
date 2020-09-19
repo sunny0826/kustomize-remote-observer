@@ -1,0 +1,39 @@
+{{ define "tabbar" }}
+    <div class="weui-tabbar">
+        <div class="weui-tabbar__item weui-bar__item_on" id="build">
+            <img src="assets/images/builder.png" alt="" class="weui-tabbar__icon">
+            <p class="weui-tabbar__label">build</p>
+        </div>
+        <div class="weui-tabbar__item" id="generate">
+            <div style="display: inline-block; position: relative;">
+                <img src="assets/images/generated_icon.png" alt="" class="weui-tabbar__icon">
+                <span class="weui-badge weui-badge_dot" style="position: absolute; top: 0; right: -6px;"></span>
+            </div>
+            <p class="weui-tabbar__label">generate</p>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            $('.weui-tabbar__item').on('click', function () {
+                $(this).addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+                // console.log($(this)[0].id);
+                $(".weui_tab_bd_item_active").removeClass('weui_tab_bd_item_active');
+                if ($(this)[0].id == "generate") {
+                    $('#tab2').addClass("weui_tab_bd_item_active");
+                } else {
+                    $('#tab1').addClass("weui_tab_bd_item_active");
+                }
+            });
+        });
+    </script>
+    <style>
+        .weui_tab_bd_item {
+            display: none;
+            height: 100%;
+            overflow: auto;
+        }
+        .weui_tab_bd_item.weui_tab_bd_item_active {
+            display: block;
+        }
+    </style>
+{{ end }}

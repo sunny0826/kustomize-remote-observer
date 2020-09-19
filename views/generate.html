@@ -1,0 +1,180 @@
+{{ define "generate" }}
+    <div class="page__bd weui_tab_bd_item" id="tab2">
+        <div class="weui-form">
+            <div class="weui-form__text-area">
+                <h2 class="weui-form__title">Kustomize Generate</h2>
+                <div class="weui-form__desc">generate file group for kustomize</div>
+            </div>
+            <div class="weui-form__control-area">
+                <div class="weui-cells__group weui-cells__group_form">
+                    <div class="weui-cells__title">App</div>
+                    <div class="weui-cells weui-cells_form">
+                        <div class="weui-cell weui-cell_active">
+                            <div class="weui-cell__hd"><label class="weui-label">app name</label></div>
+                            <div class="weui-cell__bd">
+                                <input class="weui-input" name="appname" value="app"/>
+                            </div>
+                        </div>
+                        <div class="weui-cell weui-cell_active">
+                            <div class="weui-cell__hd"><label class="weui-label">namespace</label></div>
+                            <div class="weui-cell__bd">
+                                <input class="weui-input" name="namespace" value="test"/>
+                            </div>
+                        </div>
+                        <div class="weui-cell weui-cell_active">
+                            <div class="weui-cell__hd"><label class="weui-label">image</label></div>
+                            <div class="weui-cell__bd">
+                                <input class="weui-input" name="image"
+                                       value="registry-vpc.cn-shanghai.aliyuncs.com/keking/xxx:latest"/>
+                            </div>
+                        </div>
+                        <div class="weui-cell weui-cell_active weui-cell_access weui-cell_select weui-cell_select-after">
+                            <div class="weui-cell__hd"><label class="weui-label">imagePullSecrets</label></div>
+                            <div class="weui-cell__bd" id="pullSecrets">registry-pull-secret</div>
+                        </div>
+                        <div class="weui-cell weui-cell_active">
+                            <div class="weui-cell__hd"><label class="weui-label">runShell</label></div>
+                            <div class="weui-cell__bd">
+                                <input class="weui-input" name="runShell" value="java /opt/app-*.jar"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="weui-cells__group weui-cells__group_form">
+                    <div class="weui-cells__title">Health check</div>
+                    <div class="weui-cells weui-cells_form">
+                        <div class="weui-cell weui-cell_active">
+                            <div class="weui-cell__hd"><label class="weui-label">path</label></div>
+                            <div class="weui-cell__bd">
+                                <input class="weui-input" name="path" value="/actuator/health"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="weui-cells__group weui-cells__group_form">
+                    <div class="weui-cells__title">CPU</div>
+                    <div class="weui-cells weui-cells_form">
+                        <div class="weui-cell weui-cell_active">
+                            <div class="weui-cell__hd"><label class="weui-label">limits</label></div>
+                            <div class="weui-cell__bd">
+                                <input class="weui-input" name="cpulimits" value="1000m"/>
+                            </div>
+                        </div>
+                        <div class="weui-cell weui-cell_active">
+                            <div class="weui-cell__hd"><label class="weui-label">requests</label></div>
+                            <div class="weui-cell__bd">
+                                <input class="weui-input" name="cpurequests" value="200m"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="weui-cells__group weui-cells__group_form">
+                    <div class="weui-cells__title">Memory</div>
+                    <div class="weui-cells weui-cells_form">
+                        <div class="weui-cell weui-cell_active">
+                            <div class="weui-cell__hd"><label class="weui-label">limits</label></div>
+                            <div class="weui-cell__bd">
+                                <input class="weui-input" name="memorylimits" value="2Gi"/>
+                            </div>
+                        </div>
+                        <div class="weui-cell weui-cell_active">
+                            <div class="weui-cell__hd"><label class="weui-label">requests</label></div>
+                            <div class="weui-cell__bd">
+                                <input class="weui-input" name="memoryrequests" value="2Gi"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="weui-cells__group weui-cells__group_form">
+                    <div class="weui-cells__title">Service</div>
+                    <div class="weui-cells weui-cells_form">
+                        <div class="weui-cell weui-cell_active">
+                            <div class="weui-cell__hd"><label class="weui-label">port</label></div>
+                            <div class="weui-cell__bd">
+                                <input class="weui-input" type="number" name="port" value="8080"/>
+                            </div>
+                        </div>
+                        <div class="weui-cell weui-cell_active">
+                            <div class="weui-cell__hd"><label class="weui-label">targetPort</label></div>
+                            <div class="weui-cell__bd">
+                                <input class="weui-input" type="number" name="targetPort" value="8080"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="weui-form__opr-area">
+                <a class="weui-btn weui-btn_primary" href="javascript:"
+                   id="generateFile">Generate</a>
+            </div>
+            {{ template "copyright" .}}
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            var $loadingToast = $('#loadingToast')
+
+            $('#pullSecrets').on('click', function () {
+                weui.picker([{
+                    label: 'registry-pull-secret',
+                    value: 0
+                }], {
+                    onChange: function (result) {
+                        console.log(result);
+                    },
+                    onConfirm: function (result) {
+                        console.log(result);
+                    },
+                    title: 'imagePullSecrets'
+                });
+            });
+            $('#generateFile').on('click', function () {
+                $.ajax({
+                    //提交数据的类型 POST GET
+                    type: "POST",
+                    //提交的网址
+                    url: "gene",
+                    //提交的数据
+                    data: {
+                        appname: $('input[name="appname"]').val(),
+                        namespace: $('input[name="namespace"]').val(),
+                        image: $('input[name="image"]').val(),
+                        runShell: $('input[name="runShell"]').val(),
+                        path: $('input[name="path"]').val(),
+                        cpulimits: $('input[name="cpulimits"]').val(),
+                        cpurequests: $('input[name="cpurequests"]').val(),
+                        memorylimits: $('input[name="memorylimits"]').val(),
+                        memoryrequests: $('input[name="memoryrequests"]').val(),
+                        port: $('input[name="port"]').val(),
+                        targetPort: $('input[name="targetPort"]').val(),
+                        pullSecrets: $('#pullSecrets').html(),
+                    },
+                    //返回数据的格式
+                    datatype: "html",//"xml", "html", "script", "json", "jsonp", "text".
+                    //在请求之前调用的函数
+                    beforeSend: function () {
+                        $loadingToast.fadeIn(100)
+                    },
+                    //成功返回之后调用的函数
+                    success: function (data) {
+                        $loadingToast.fadeOut(100);
+                        $toast.fadeIn(100);
+                        setTimeout(function () {
+                            $toast.fadeOut(100);
+                        }, 2000);
+                        // console.log(data);
+                        $("body").html(data);
+                    },
+                    //调用出错执行的函数
+                    error: function (data) {
+                        //请求出错处理
+                        console.log(data)
+                        $iosDialog2.fadeIn(200);
+                        $loadingToast.fadeOut(100);
+                        $("#dia").html(data.statusText);
+                    }
+                });
+            });
+        });
+    </script>
+{{ end }}

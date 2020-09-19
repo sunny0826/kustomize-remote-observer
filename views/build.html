@@ -1,0 +1,138 @@
+{{ define "build" }}
+    <div class="page__bd page__bd_spacing weui_tab_bd_item weui_tab_bd_item_active" id="tab1">
+        <div class="weui-form">
+            <div class="weui-form__text-area">
+                <h2 class="weui-form__title">Kustomize Remote</h2>
+                <div class="weui-form__desc">imput remote git url</div>
+            </div>
+            <div class="weui-form__control-area">
+                <div class="weui-cells__group weui-cells__group_form">
+                    <div class="weui-cells__title">parameters</div>
+                    <div class="weui-cells weui-cells_form">
+                        <div class="weui-cell weui-cell_active weui-cell_access weui-cell_select weui-cell_select-before">
+                            <div class="weui-cell__hd" id="showProtocols"><label
+                                        class="weui-label" id="protocolsLabel">https</label>
+                            </div>
+                            <div class="weui-cell__bd">
+                                <input class="weui-input" type="git_path" placeholder="please input git URL"
+                                       id="git"
+                                       value="github.com/kubernetes-sigs/kustomize/examples/multibases?ref=v1.0.6"/>
+                            </div>
+                        </div>
+                        <div class="weui-cell weui-cell_active weui-cell_switch">
+                            <div class="weui-cell__bd">private repo</div>
+                            <div class="weui-cell__ft">
+                                <input id="switchCP" class="weui-switch" type="checkbox"/>
+                            </div>
+                        </div>
+                        <div class="weui-cell weui-cell_active" id="user_ele" style="display: none;">
+                            <div class="weui-cell__hd"><label class="weui-label">UserName</label></div>
+                            <div class="weui-cell__bd">
+                                <input id="js_input" class="weui-input" name="username"
+                                       placeholder="please input git user name"/>
+                            </div>
+                        </div>
+                        <div class="weui-cell weui-cell_active" id="pass_ele" style="display: none;">
+                            <div class="weui-cell__hd"><label class="weui-label">PassWord</label></div>
+                            <div class="weui-cell__bd">
+                                <input id="js_input" class="weui-input" type="password"
+                                       placeholder="please input password"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="weui-form__opr-area">
+                <a class="weui-btn weui-btn_primary" href="javascript:"
+                   id="showTooltips">Build</a>
+            </div>
+            {{ template "copyright" .}}
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            var $toast = $('#js_toast'),
+                $loadingToast = $('#loadingToast'),
+                // $input = $('#git'),
+                $switch = $('#switchCP'),
+                $user = $('#user_ele'),
+                $pass = $('#pass_ele'),
+                $iosDialog2 = $('#iosDialog2')
+
+            $('#showTooltips').on('click', function () {
+                if ($(this).hasClass('weui-btn_disabled')) return;
+
+                // toptips的fixed, 如果有`animation`, `position: fixed`不生效
+                $('.page.cell').removeClass('slideIn');
+
+                $.ajax({
+                    //提交数据的类型 POST GET
+                    type: "POST",
+                    //提交的网址
+                    url: "kust",
+                    //提交的数据
+                    data: {
+                        protocols: $('#protocolsLabel').html(),
+                        git_path: $('input[type="git_path"]').val(),
+                        username: $('input[name="username"]').val(),
+                        password: $('input[type="password"]').val()
+                    },
+                    //返回数据的格式
+                    datatype: "html",//"xml", "html", "script", "json", "jsonp", "text".
+                    //在请求之前调用的函数
+                    beforeSend: function () {
+                        $loadingToast.fadeIn(100)
+                    },
+                    //成功返回之后调用的函数
+                    success: function (data) {
+                        $loadingToast.fadeOut(100);
+                        $toast.fadeIn(100);
+                        setTimeout(function () {
+                            $toast.fadeOut(100);
+                        }, 2000);
+                        // console.log(data);
+                        $("body").html(data);
+                    },
+                    //调用出错执行的函数
+                    error: function (data) {
+                        //请求出错处理
+                        console.log(data)
+                        $iosDialog2.fadeIn(200);
+                        $loadingToast.fadeOut(100);
+                        $("#dia").html(data.statusText);
+                    }
+                });
+            });
+            $('#iosDialog2').on('click', '.weui-dialog__btn', function () {
+                $(this).parents('.js_dialog').fadeOut(200);
+            });
+            $('#showProtocols').on('click', function () {
+                weui.picker([{
+                    label: 'http',
+                    value: 0
+                }, {
+                    label: 'https',
+                    value: 1
+                }], {
+                    onChange: function (result) {
+                        console.log(result[0].label);
+                        $('#protocolsLabel').html(result[0].label)
+                    },
+                    onConfirm: function (result) {
+                        console.log(result);
+                    },
+                    title: 'Protocol'
+                });
+            });
+            $switch.on('click', function () {
+                if ($switch.is(':checked')) {
+                    $user.fadeIn(100);
+                    $pass.fadeIn(100);
+                } else {
+                    $user.fadeOut(100);
+                    $pass.fadeOut(100);
+                }
+            })
+        });
+    </script>
+{{ end }}

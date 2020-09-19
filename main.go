@@ -1,18 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sunny0826/kustomize-remote-observer/controllers"
-	"github.com/zserge/lorca"
+	_ "github.com/zserge/lorca"
 	"html/template"
 	"io"
-	"log"
+	_ "log"
 	"net/http"
-	"os"
-	"os/signal"
-	"path/filepath"
 	"runtime"
 )
 
@@ -21,10 +17,10 @@ func main() {
 	if runtime.GOOS == "linux" {
 		args = append(args, "--class=Lorca")
 	}
-	ui, err := lorca.New("", "", 480, 620, args...)
-	if err != nil {
-		log.Fatal(err)
-	}
+	//ui, err := lorca.New("", "", 480, 620, args...)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
 	// Echo instance
 	e := echo.New()
 
@@ -32,14 +28,14 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	ep, err := os.Executable()
-	if err != nil {
-		log.Fatalln("os.Executable:", err)
-	}
-	err = os.Chdir(filepath.Join(filepath.Dir(ep), "..", "Resources"))
-	if err != nil {
-		log.Fatalln("os.Chdir:", err)
-	}
+	//ep, err := os.Executable()
+	//if err != nil {
+	//	log.Fatalln("os.Executable:", err)
+	//}
+	//err = os.Chdir(filepath.Join(filepath.Dir(ep), "..", "Resources"))
+	//if err != nil {
+	//	log.Fatalln("os.Chdir:", err)
+	//}
 
 	// Static
 	e.Static("/assets", "assets")
@@ -52,23 +48,24 @@ func main() {
 
 	// Routes
 	e.POST("/kust", controllers.HandlerKust)
+	e.POST("/gene", controllers.GenerateKust)
 	e.GET("/", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "index.html", "")
 	})
 	// Start server
-	go e.Start(":1323")
+	//go e.Start(":1323")
 
-	ui.Load(fmt.Sprintf("http://%s", "localhost:1323"))
-	defer ui.Close()
-	//e.Logger.Fatal(e.Start(":1323"))
+	//ui.Load(fmt.Sprintf("http://%s", "localhost:1323"))
+	//defer ui.Close()
+	e.Logger.Fatal(e.Start(":1323"))
 
 	// Wait until the interrupt signal arrives or browser window is closed
-	sigc := make(chan os.Signal)
-	signal.Notify(sigc, os.Interrupt)
-	select {
-		case <-sigc:
-		case <-ui.Done():
-	}
+	//sigc := make(chan os.Signal)
+	//signal.Notify(sigc, os.Interrupt)
+	//select {
+	//case <-sigc:
+	//case <-ui.Done():
+	//}
 
 }
 
