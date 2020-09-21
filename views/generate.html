@@ -112,7 +112,9 @@
     </div>
     <script type="text/javascript">
         $(function () {
-            var $loadingToast = $('#loadingToast')
+            var $loadingToast = $('#loadingToast'),
+                $toast = $('#js_toast'),
+                $iosDialog2 = $('#iosDialog2')
 
             $('#pullSecrets').on('click', function () {
                 weui.picker([{
@@ -161,9 +163,12 @@
                         $toast.fadeIn(100);
                         setTimeout(function () {
                             $toast.fadeOut(100);
-                        }, 2000);
+                        }, 900);
                         // console.log(data);
-                        $("body").html(data);
+                        setTimeout(function () {
+                            $("#dia").html("<strong class=\"weui-dialog__title\">Generate Path</strong>" + data);
+                            $iosDialog2.fadeIn(200);
+                        }, 1000);
                     },
                     //调用出错执行的函数
                     error: function (data) {

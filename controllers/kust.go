@@ -77,16 +77,16 @@ func GenerateKust(c echo.Context) error {
 	if err := c.Bind(g); err != nil {
 		return err
 	}
-	err := handlerTemplate(g)
+	path, err := handlerTemplate(g)
 	if err != nil {
 		c.Logger().Error(err)
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	log.Info("GenerateKust end")
-	return c.JSON(http.StatusOK, "ok")
+	return c.JSON(http.StatusOK, path)
 }
 
-func handlerTemplate(g *generateType) error {
+func handlerTemplate(g *generateType) (string, error) {
 	desktop := getDesktop()
 	basePath := fmt.Sprintf("%s/%s/base", desktop, g.AppName)
 	overPath := fmt.Sprintf("%s/%s/overlays/uat", desktop, g.AppName)
@@ -105,15 +105,16 @@ func handlerTemplate(g *generateType) error {
 	for key, name := range fileMap {
 		file, err := os.Create(name)
 		if err != nil {
-			return err
+			return "", err
 		}
 		defer file.Close()
 		err = createYaml(key, fileMap, g)
 		if err != nil {
-			return err
+			return "", err
 		}
 	}
-	return nil
+	resultPath := fmt.Sprintf("%s/%s", desktop, g.AppName)
+	return resultPath, nil
 }
 
 func createYaml(name string, fileMap map[string]string, g *generateType) error {
@@ -155,6 +156,6 @@ func getDesktop() string {
 		panic(error)
 	}
 	homedir := myself.HomeDir
-	desktop := homedir + "/Desktop/"
+	desktop := homedir + "/Desktop"
 	return desktop
 }
